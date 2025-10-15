@@ -2,6 +2,7 @@
 # Assignment 5, Question 2: Python Data Processing
 # Process configuration files for data generation.
 
+#!/usr/bin/env python3
 
 def parse_config(filepath: str) -> dict:
     """
@@ -9,7 +10,7 @@ def parse_config(filepath: str) -> dict:
 
     Args:
         filepath: Path to q2_config.txt
-
+    
     Returns:
         dict: Configuration as key-value pairs
 
@@ -18,8 +19,13 @@ def parse_config(filepath: str) -> dict:
         >>> config['sample_data_rows']
         '100'
     """
-    # TODO: Read file, split on '=', create dict
-    pass
+    config = {}
+    with open(filepath, 'r') as file:
+        for i in file:
+            key, value = i.strip().split('=')
+            config[key] = value
+    return config
+
 
 
 def validate_config(config: dict) -> dict:
@@ -43,8 +49,29 @@ def validate_config(config: dict) -> dict:
         >>> results['sample_data_rows']
         True
     """
-    # TODO: Implement with if/elif/else
-    pass
+    results = {}
+
+    #sample_data_rows must be an int and > 0
+    if isinstance(config.get("sample_data_rows"), int) and config["sample_data_rows"] > 0:
+        results["sample_data_rows"] = True
+    else:
+        results["sample_data_rows"] = False
+
+    #sample_data_min must be an int and >= 1
+    if isinstance(config.get("sample_data_min"), int) and config["sample_data_min"] >= 1:
+        results["sample_data_min"] = True
+    else:
+        results["sample_data_min"] = False
+
+    #sample_data_max must be an int and > sample_data_min
+    if not isinstance(config.get("sample_data_max"), int):
+        results["sample_data_max"] = False
+    elif config["sample_data_max"] <= config.get("sample_data_min", 0):
+        results["sample_data_max"] = False
+    else:
+        results["sample_data_max"] = True
+
+    return results
 
 
 def generate_sample_data(filename: str, config: dict) -> None:
@@ -66,10 +93,20 @@ def generate_sample_data(filename: str, config: dict) -> None:
         >>> import random
         >>> random.randint(18, 75)  # Returns random integer between 18-75
     """
-    # TODO: Parse config values (convert strings to int)
-    # TODO: Generate random numbers and save to file
-    # TODO: Use random module with config-specified range
-    pass
+    import random
+
+    rows = int(config.get('sample_data_rows'))
+    min_val = int(config.get('sample_data_min'))
+    max_val = int(config.get('sample_data_max'))
+
+    random_numbers = [random.randint(min_val, max_val) for i in range(rows)]
+    
+    with open(filename, "w") as file:
+        for r in random_numbers:
+            file.write(f"{r}\n")
+        
+    print(f"✅ File '{filename}' created with {rows} random numbers between {min_val} and {max_val}.")
+
 
 
 def calculate_statistics(data: list) -> dict:
@@ -87,8 +124,16 @@ def calculate_statistics(data: list) -> dict:
         >>> stats['mean']
         30.0
     """
-    # TODO: Calculate stats
-    pass
+    statistics = {"mean": 0, "median": 0, "sum": 0, "count": 0}
+    n = len(data)
+    sorted_data = sorted(data)
+    statistics["mean"] = sum(data) / n
+    statistics["median"] = sorted_data[n // 2] if n % 2 == 1 else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+    statistics["sum"] = sum(data)
+    statistics["count"] = n
+    return statistics
+    
+
 
 
 if __name__ == '__main__':
@@ -100,4 +145,17 @@ if __name__ == '__main__':
     # 
     # TODO: Read the generated file and calculate statistics
     # TODO: Save statistics to output/statistics.txt
-    pass
+
+    config = parse_config("q2_config.txt")
+    validation = validate_config(config)
+    generate_sample_data("data/sample_data.csv", config)
+    with open("data/sample_data.csv", "r") as file:
+        data = [int(line.strip()) for line in file.readlines()]
+
+    stats = calculate_statistics(data)
+    
+    with open("output/statistics.txt", "w") as file:
+        for key, value in stats.items():
+            file.write(f"{key}: {value}\n")
+
+    print("✅ Statistics saved to output/statistics.txt")

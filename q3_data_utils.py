@@ -23,8 +23,8 @@ def load_data(filepath: str) -> pd.DataFrame:
         >>> df.shape
         (10000, 18)
     """
-    pass
-
+    data = pd.read_csv(filepath)
+    return data
 
 def clean_data(df: pd.DataFrame, remove_duplicates: bool = True,
                sentinel_value: float = -999) -> pd.DataFrame:
@@ -42,7 +42,11 @@ def clean_data(df: pd.DataFrame, remove_duplicates: bool = True,
     Example:
         >>> df_clean = clean_data(df, sentinel_value=-999)
     """
-    pass
+    cleaned_data = df.copy()
+    cleaned_data.replace(sentinel_value, np.nan, inplace=True)
+    if remove_duplicates:
+        cleaned_data.drop_duplicates(inplace=True)
+    return cleaned_data
 
 
 def detect_missing(df: pd.DataFrame) -> pd.Series:
@@ -60,8 +64,8 @@ def detect_missing(df: pd.DataFrame) -> pd.Series:
         >>> missing['age']
         15
     """
-    pass
-
+    missing_counts = df.isnull().sum()
+    return missing_counts
 
 def fill_missing(df: pd.DataFrame, column: str, strategy: str = 'mean') -> pd.DataFrame:
     """
@@ -78,7 +82,14 @@ def fill_missing(df: pd.DataFrame, column: str, strategy: str = 'mean') -> pd.Da
     Example:
         >>> df_filled = fill_missing(df, 'age', strategy='median')
     """
-    pass
+    copy = df.copy()
+    if strategy == "mean":
+        copy[column].fillna(copy[column].mean(), inplace=True)
+    elif strategy == "median":
+        copy[column].fillna(copy[column].median(), inplace=True)
+    elif strategy == "ffill":
+        copy[column].fillna(method='ffill', inplace=True)
+    return copy
 
 
 def filter_data(df: pd.DataFrame, filters: list) -> pd.DataFrame:
@@ -111,7 +122,7 @@ def filter_data(df: pd.DataFrame, filters: list) -> pd.DataFrame:
         >>> filters = [{'column': 'age', 'condition': 'in_range', 'value': [18, 65]}]
         >>> df_filtered = filter_data(df, filters)
     """
-    pass
+    
 
 
 def transform_types(df: pd.DataFrame, type_map: dict) -> pd.DataFrame:

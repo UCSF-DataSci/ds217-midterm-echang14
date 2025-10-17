@@ -122,6 +122,23 @@ def filter_data(df: pd.DataFrame, filters: list) -> pd.DataFrame:
         >>> filters = [{'column': 'age', 'condition': 'in_range', 'value': [18, 65]}]
         >>> df_filtered = filter_data(df, filters)
     """
+    filtered_df = df.copy()
+    for f in filters:
+        col = f["column"]
+        cond = f["condition"]
+        val = f["value"]
+        
+        if cond == "equal":
+            filtered_df = filtered_df[filtered_df[col] == val]
+        elif cond == "greater_than":
+            fildterd_df = filtered_df[filtered_df[col] > val]
+        elif cond == "less_than":
+            filtered_df = filtered_df[filtered_df[col] < val]
+        elif cond == "in_range":
+            filtered_df = filtered_df[(filtered_df[col] >= val[0]) & (filtered_df[col] <= val[1])]
+        elif cond == "in_list":
+            filtered_df = filtered_df[filtered_df[col].isin(val)]   
+    return filtered_df
     
 
 
@@ -145,8 +162,17 @@ def transform_types(df: pd.DataFrame, type_map: dict) -> pd.DataFrame:
         ... }
         >>> df_typed = transform_types(df, type_map)
     """
-    pass
-
+    transformed_df = df.copy()
+    for col, type in type_map.items():
+        if type == "datetime":
+            transformed_df[col] = pd.to_datetime(transformed_df[col], errors= "coerce")
+        elif type == "numeric":
+            transformed_df[col] = pd.to_numeric(transformed_df[col], errors= "coerce")
+        elif type == "category":
+            transformed_df[col] = transformed_df[col].astype("category")
+        elif type == "string":
+            transformed_df[col] = transformed_df[col].astype("string")
+    return transformed_df
 
 def create_bins(df: pd.DataFrame, column: str, bins: list,
                 labels: list, new_column: str = None) -> pd.DataFrame:
@@ -171,7 +197,11 @@ def create_bins(df: pd.DataFrame, column: str, bins: list,
         ...     labels=['<18', '18-34', '35-49', '50-64', '65+']
         ... )
     """
-    pass
+    binned_df = df.copy()
+    if new_column is None:
+        new_column = f"{column}_binned"
+    binned_df[new_column] = pd.cut(binned_df[column], bins=bins, labels=labels, include_lowest=True)
+    return binned_df
 
 
 def summarize_by_group(df: pd.DataFrame, group_col: str,
@@ -199,7 +229,11 @@ def summarize_by_group(df: pd.DataFrame, group_col: str,
         ...     {'age': ['mean', 'std'], 'bmi': 'mean'}
         ... )
     """
-    pass
+    if agg_dict is None:
+        summary_df = df.groupby(group_col).describe()
+    else:
+        summary_df = df.groupby(group_col).agg(agg_dict)
+    return summary_df
 
 
 
@@ -217,8 +251,9 @@ if __name__ == '__main__':
     print("  - create_bins()")
     print("  - summarize_by_group()")
     
-    # TODO: Add simple test example here
-    # Example:
-    # test_df = pd.DataFrame({'age': [25, 30, 35], 'bmi': [22, 25, 28]})
-    # print("Test DataFrame created:", test_df.shape)
-    # print("Test detect_missing:", detect_missing(test_df))
+
+    test_df = pd.DataFrame({'age': [25, 30, 35], 'bmi': [22, 25, 28]})
+    print("Test DataFrame created:", test_df.shape)
+    print("Test detect_missing:", detect_missing(test_df))
+
+

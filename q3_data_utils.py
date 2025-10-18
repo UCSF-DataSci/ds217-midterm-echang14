@@ -133,7 +133,7 @@ def filter_data(df: pd.DataFrame, filters: list) -> pd.DataFrame:
         cond = f["condition"]
         val = f["value"]
         
-        if cond == "equals:":
+        if cond == "equals":
             filtered_df = filtered_df[filtered_df[col] == val]
         elif cond == "greater_than":
             filtered_df = filtered_df[filtered_df[col] > val]
@@ -268,4 +268,3 @@ if __name__ == '__main__':
     print("Test create_bins:", create_bins(test_df, "age", bins=[0, 18, 30, 100], labels=["<18", "18-29", "30+"]))
     print("Test summarize_by_group:", summarize_by_group(test_df, "age", {"bmi": "mean"}))  
 
-    print(test_df.dtypes)

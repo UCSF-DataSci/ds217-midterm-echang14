@@ -4,8 +4,12 @@
 #
 # These utilities will be imported and used in Q4-Q7 notebooks.
 
+#!/usr/bin/env python3
+
 import pandas as pd
 import numpy as np
+
+
 
 
 def load_data(filepath: str) -> pd.DataFrame:
@@ -43,9 +47,10 @@ def clean_data(df: pd.DataFrame, remove_duplicates: bool = True,
         >>> df_clean = clean_data(df, sentinel_value=-999)
     """
     cleaned_data = df.copy()
-    cleaned_data.replace(sentinel_value, np.nan, inplace=True)
+    cleaned_data = cleaned_data.replace(sentinel_value, np.nan)
     if remove_duplicates:
-        cleaned_data.drop_duplicates(inplace=True)
+        cleaned_data = cleaned_data.drop_duplicates()
+
     return cleaned_data
 
 
@@ -84,11 +89,11 @@ def fill_missing(df: pd.DataFrame, column: str, strategy: str = 'mean') -> pd.Da
     """
     copy = df.copy()
     if strategy == "mean":
-        copy[column].fillna(copy[column].mean(), inplace=True)
+        copy[column] = copy[column].fillna(copy[column].mean())
     elif strategy == "median":
-        copy[column].fillna(copy[column].median(), inplace=True)
+        copy[column] = copy[column].fillna(copy[column].median())
     elif strategy == "ffill":
-        copy[column].fillna(method='ffill', inplace=True)
+        copy[column] = copy[column].fillna(method='ffill')
     return copy
 
 
@@ -128,10 +133,10 @@ def filter_data(df: pd.DataFrame, filters: list) -> pd.DataFrame:
         cond = f["condition"]
         val = f["value"]
         
-        if cond == "equal":
+        if cond == "equals:":
             filtered_df = filtered_df[filtered_df[col] == val]
         elif cond == "greater_than":
-            fildterd_df = filtered_df[filtered_df[col] > val]
+            filtered_df = filtered_df[filtered_df[col] > val]
         elif cond == "less_than":
             filtered_df = filtered_df[filtered_df[col] < val]
         elif cond == "in_range":
@@ -252,8 +257,15 @@ if __name__ == '__main__':
     print("  - summarize_by_group()")
     
 
-    test_df = pd.DataFrame({'age': [25, 30, 35], 'bmi': [22, 25, 28]})
+    test_df = pd.DataFrame({"age": [25, 25, -999, 3], "bmi": [22, 22, 28, None]})
+    print(test_df.dtypes)
     print("Test DataFrame created:", test_df.shape)
+    print("Test clean_data:", clean_data(test_df))
     print("Test detect_missing:", detect_missing(test_df))
+    print("Test fill_missing:", fill_missing(test_df, "bmi", "mean"))
+    print("Test filter_data:", filter_data(test_df, [{"column": "age", "condition": "greater_than", "value": 20}]))
+    print("Test transform_types:", transform_types(test_df, {"age": "numeric"}))
+    print("Test create_bins:", create_bins(test_df, "age", bins=[0, 18, 30, 100], labels=["<18", "18-29", "30+"]))
+    print("Test summarize_by_group:", summarize_by_group(test_df, "age", {"bmi": "mean"}))  
 
-
+    print(test_df.dtypes)

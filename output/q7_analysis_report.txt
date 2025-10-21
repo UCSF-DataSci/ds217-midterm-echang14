@@ -1,0 +1,17 @@
+=== Intervention Group Summary ===
+intervention_group  outcome_cvd_rate  adherence_pct  adverse_events
+           control          0.336530      60.621688        0.068924
+       treatment a          0.319482      60.210173        0.189100
+       treatment b          0.333633      61.009404        0.178636
+
+=== Dropout Status by Intervention Group ===
+dropout               No  Yes
+intervention_group           
+control             2831  506
+treatment a         2831  490
+treatment b         2871  471
+
+=== Key Findings ===
+1. The mean adherence and cvd rates were very similar among the different intervention groups.
+2. The mean adverse events for the control group was much lower than the treatment group.
+3. Dropout appears highest in the control group, then treatment a then treatment b has the lowest number of dropouts.

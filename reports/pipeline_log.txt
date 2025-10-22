@@ -1,0 +1,10 @@
+Starting clinical trial data pipeline...
+Execute Q4
+Q4 executed successfully.
+Execute Q5
+Q5 executed successfully.
+Execute Q6
+Q6 executed successfully.
+Execute Q7
+Q7 executed successfully.
+Pipeline complete!

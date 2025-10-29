@@ -1,8 +1,7 @@
+#!/usr/bin/env python3
 # TODO: Add shebang line: #!/usr/bin/env python3
 # Assignment 5, Question 2: Python Data Processing
 # Process configuration files for data generation.
-
-#!/usr/bin/env python3
 
 def parse_config(filepath: str) -> dict:
     """
@@ -51,26 +50,12 @@ def validate_config(config: dict) -> dict:
     """
     results = {}
 
-    #sample_data_rows must be an int and > 0
-    if isinstance(config.get("sample_data_rows"), int) and config["sample_data_rows"] > 0:
+    if int(config["sample_data_rows"]) > 0:
         results["sample_data_rows"] = True
-    else:
-        results["sample_data_rows"] = False
-
-    #sample_data_min must be an int and >= 1
-    if isinstance(config.get("sample_data_min"), int) and config["sample_data_min"] >= 1:
+    if int(config["sample_data_min"]) >= 1:
         results["sample_data_min"] = True
-    else:
-        results["sample_data_min"] = False
-
-    #sample_data_max must be an int and > sample_data_min
-    if not isinstance(config.get("sample_data_max"), int):
-        results["sample_data_max"] = False
-    elif config["sample_data_max"] <= config.get("sample_data_min", 0):
-        results["sample_data_max"] = False
-    else:
-        results["sample_data_max"] = True
-
+    if int(config["sample_data_max"]) > int(config["sample_data_min"]):
+        results["sample_data_max"] = True  
     return results
 
 

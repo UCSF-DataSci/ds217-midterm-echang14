@@ -1,3 +1,4 @@
+#!/bin/bash
 # TODO: Add shebang line: #!/bin/bash
 # Assignment 5, Question 8: Pipeline Automation Script
 # Run the clinical trial data analysis pipeline
@@ -9,7 +10,6 @@
 # NOTE: Q3 (q3_data_utils.py) is a library imported by the notebooks, not run directly
 # NOTE: The main pipeline runs Q4-Q7 notebooks in order
 
-#!/bin/bash
 
 echo "Starting clinical trial data pipeline..." > reports/pipeline_log.txt
 
